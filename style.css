@@ -1,0 +1,373 @@
+/* ============================================================
+     DESIGN TOKENS
+     Theme: an Indian bank passbook / deposit ledger.
+     Ink on paper, a brass stamp accent, monospace figures.
+     ============================================================ */
+  :root{
+    --ink:        #1c2541;   /* deep ledger-navy for text & rules   */
+    --ink-soft:   #4a5578;   /* muted navy for secondary text       */
+    --paper:      #f7f3e8;   /* aged ledger paper                   */
+    --paper-raise:#fffdf6;   /* card surface, slightly lighter      */
+    --rule:       #ddd3b4;   /* hairline rule colour                */
+    --brass:      #a9812f;   /* brass stamp / accent                */
+    --brass-deep: #8a6a22;
+    --leaf:       #2f6b4f;   /* gain / positive money green         */
+    --leaf-bg:    #e7f0e9;
+    --oxide:      #8c3b34;   /* error / stamp-red ink               */
+    --oxide-bg:   #f6e7e5;
+    --shadow:     rgba(28,37,65,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* faint horizontal ledger rules across the whole page */
+  body{
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent, transparent 37px,
+      var(--rule) 37px, var(--rule) 38px
+    );
+  }
+
+  .wrap{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+
+  /* ---------------- Header: passbook cover strip ---------------- */
+  header.cover{
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 10px;
+    padding: 26px 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 24px var(--shadow);
+  }
+  header.cover::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border: 1px solid rgba(247,243,232,0.35);
+    border-radius: 6px;
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family: Georgia, "Times New Roman", serif;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--brass);
+    margin: 0 0 8px;
+  }
+  h1{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(24px, 5vw, 32px);
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  header.cover p{
+    margin: 0;
+    color: #cfd4e6;
+    font-size: 14px;
+    max-width: 46ch;
+  }
+
+  /* ---------------- Card shell ---------------- */
+  .card{
+    background: var(--paper-raise);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 22px;
+    margin-top: 20px;
+    box-shadow: 0 4px 14px var(--shadow);
+  }
+  .card h2{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--rule);
+  }
+
+  /* ---------------- Form ---------------- */
+  .field{
+    margin-bottom: 16px;
+  }
+  .field label{
+    display:block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .field .hint{
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-left: 6px;
+  }
+  .input-row{
+    position: relative;
+  }
+  .input-row .prefix{
+    position:absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-soft);
+    font-family: "Courier New", monospace;
+    font-size: 15px;
+    pointer-events:none;
+  }
+  input[type="number"]{
+    width: 100%;
+    font-size: 16px;
+    font-family: "Courier New", monospace;
+    padding: 12px 14px 12px 14px;
+    border: 1.5px solid var(--rule);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--ink);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  input[type="number"].with-prefix{ padding-left: 30px; }
+  input[type="number"]:focus{
+    outline: none;
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(169,129,47,0.18);
+  }
+  input.invalid{
+    border-color: var(--oxide);
+    background: var(--oxide-bg);
+  }
+  .error-msg{
+    display:none;
+    color: var(--oxide);
+    font-size: 12.5px;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+  .error-msg.show{ display:block; }
+
+  button.calc-btn{
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--paper);
+    background: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform .08s ease, background .15s ease;
+  }
+  button.calc-btn:hover{ background: #10182e; }
+  button.calc-btn:active{ transform: scale(0.98); }
+  button.calc-btn:focus-visible{
+    outline: 3px solid var(--brass);
+    outline-offset: 2px;
+  }
+
+  .top-error{
+    display:none;
+    background: var(--oxide-bg);
+    border: 1px solid var(--oxide);
+    color: var(--oxide);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .top-error.show{ display:block; }
+
+  /* ---------------- Results ---------------- */
+  #results{ display:none; }
+  #results.show{ display:block; }
+
+  .given-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .given-grid .item{
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align:center;
+  }
+  .given-grid .item .label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  .given-grid .item .value{
+    font-family: "Courier New", monospace;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  /* ---- ledger entry for each period (numbered = a real timeline) ---- */
+  .period{
+    position: relative;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--brass);
+    border-radius: 8px;
+    padding: 16px 16px 16px 46px;
+    margin-top: 14px;
+    background: var(--paper-raise);
+  }
+  .period.remaining{ border-left-color: var(--leaf); }
+  .period .badge{
+    position:absolute;
+    left: -2px;
+    top: -2px;
+    width: 34px;
+    height: 34px;
+    background: var(--brass);
+    color: var(--paper-raise);
+    border-radius: 50% 0 50% 0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: Georgia, serif;
+    font-weight:700;
+    font-size: 13px;
+  }
+  .period.remaining .badge{ background: var(--leaf); }
+  .period h3{
+    margin: 0 0 10px;
+    font-size: 14.5px;
+    font-family: Georgia, serif;
+    color: var(--ink);
+  }
+  .period .line{
+    display:flex;
+    justify-content: space-between;
+    align-items:baseline;
+    font-size: 13.5px;
+    padding: 5px 0;
+    border-bottom: 1px dotted var(--rule);
+    gap: 10px;
+  }
+  .period .line:last-child{ border-bottom:none; }
+  .period .line .k{ color: var(--ink-soft); }
+  .period .line .v{
+    font-family:"Courier New", monospace;
+    font-weight:700;
+    text-align:right;
+    white-space: nowrap;
+  }
+  .period .line.formula .v{
+    font-weight: 400;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+  }
+  .period .line.result .v{ color: var(--leaf); }
+
+  /* ---- final summary: torn deposit-receipt look (signature element) ---- */
+  .receipt{
+    margin-top: 22px;
+    position: relative;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 10px;
+    padding: 24px 22px 26px;
+    text-align:center;
+    overflow:visible;
+  }
+  .receipt::before, .receipt::after{
+    content:"";
+    position:absolute;
+    left:0; right:0;
+    height: 14px;
+    background:
+      radial-gradient(circle at 8px 0, transparent 7px, var(--paper) 7.5px) repeat-x;
+    background-size: 16px 14px;
+  }
+  .receipt::before{ top: -7px; transform: rotate(180deg); }
+  .receipt::after{ bottom: -7px; }
+  .receipt .tag{
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 10px;
+  }
+  .receipt .totals{
+    display:flex;
+    justify-content:center;
+    gap: 36px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .receipt .totals .t-item .t-label{
+    font-size: 12px;
+    color: #cfd4e6;
+    margin-bottom: 4px;
+  }
+  .receipt .totals .t-item .t-value{
+    font-family:"Courier New", monospace;
+    font-weight:700;
+    font-size: 17px;
+    color: var(--brass);
+  }
+  .receipt .final{
+    border-top: 1px dashed rgba(247,243,232,0.35);
+    margin-top: 6px;
+    padding-top: 14px;
+  }
+  .receipt .final .f-label{
+    font-family: Georgia, serif;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #cfd4e6;
+    margin-bottom: 6px;
+  }
+  .receipt .final .f-value{
+    font-family:"Courier New", monospace;
+    font-weight: 800;
+    font-size: clamp(24px, 6vw, 34px);
+    color: var(--paper);
+  }
+
+  footer{
+    text-align:center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 30px;
+  }
+
+  /* ---------------- Responsive ---------------- */
+  @media (max-width: 520px){
+    .given-grid{ grid-template-columns: 1fr; }
+    .receipt .totals{ gap: 20px; }
+    .period{ padding: 14px 12px 14px 40px; }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
