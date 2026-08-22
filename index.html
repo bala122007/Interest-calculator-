@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simple Interest Calculator — 3-Year Compounding Ledger</title>
+<meta name="description" content="Calculate simple interest over 3-year reinvestment periods with a clear, passbook-style breakdown." />
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     Theme: an Indian bank passbook / deposit ledger.
+     Ink on paper, a brass stamp accent, monospace figures.
+     ============================================================ */
+  :root{
+    --ink:        #1c2541;   /* deep ledger-navy for text & rules   */
+    --ink-soft:   #4a5578;   /* muted navy for secondary text       */
+    --paper:      #f7f3e8;   /* aged ledger paper                   */
+    --paper-raise:#fffdf6;   /* card surface, slightly lighter      */
+    --rule:       #ddd3b4;   /* hairline rule colour                */
+    --brass:      #a9812f;   /* brass stamp / accent                */
+    --brass-deep: #8a6a22;
+    --leaf:       #2f6b4f;   /* gain / positive money green         */
+    --leaf-bg:    #e7f0e9;
+    --oxide:      #8c3b34;   /* error / stamp-red ink               */
+    --oxide-bg:   #f6e7e5;
+    --shadow:     rgba(28,37,65,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* faint horizontal ledger rules across the whole page */
+  body{
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent, transparent 37px,
+      var(--rule) 37px, var(--rule) 38px
+    );
+  }
+
+  .wrap{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+
+  /* ---------------- Header: passbook cover strip ---------------- */
+  header.cover{
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 10px;
+    padding: 26px 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 24px var(--shadow);
+  }
+  header.cover::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border: 1px solid rgba(247,243,232,0.35);
+    border-radius: 6px;
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family: Georgia, "Times New Roman", serif;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--brass);
+    margin: 0 0 8px;
+  }
+  h1{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(24px, 5vw, 32px);
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  header.cover p{
+    margin: 0;
+    color: #cfd4e6;
+    font-size: 14px;
+    max-width: 46ch;
+  }
+
+  /* ---------------- Card shell ---------------- */
+  .card{
+    background: var(--paper-raise);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 22px;
+    margin-top: 20px;
+    box-shadow: 0 4px 14px var(--shadow);
+  }
+  .card h2{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--rule);
+  }
+
+  /* ---------------- Form ---------------- */
+  .field{
+    margin-bottom: 16px;
+  }
+  .field label{
+    display:block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .field .hint{
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-left: 6px;
+  }
+  .input-row{
+    position: relative;
+  }
+  .input-row .prefix{
+    position:absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-soft);
+    font-family: "Courier New", monospace;
+    font-size: 15px;
+    pointer-events:none;
+  }
+  input[type="number"]{
+    width: 100%;
+    font-size: 16px;
+    font-family: "Courier New", monospace;
+    padding: 12px 14px 12px 14px;
+    border: 1.5px solid var(--rule);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--ink);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  input[type="number"].with-prefix{ padding-left: 30px; }
+  input[type="number"]:focus{
+    outline: none;
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(169,129,47,0.18);
+  }
+  input.invalid{
+    border-color: var(--oxide);
+    background: var(--oxide-bg);
+  }
+  .error-msg{
+    display:none;
+    color: var(--oxide);
+    font-size: 12.5px;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+  .error-msg.show{ display:block; }
+
+  button.calc-btn{
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--paper);
+    background: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform .08s ease, background .15s ease;
+  }
+  button.calc-btn:hover{ background: #10182e; }
+  button.calc-btn:active{ transform: scale(0.98); }
+  button.calc-btn:focus-visible{
+    outline: 3px solid var(--brass);
+    outline-offset: 2px;
+  }
+
+  .top-error{
+    display:none;
+    background: var(--oxide-bg);
+    border: 1px solid var(--oxide);
+    color: var(--oxide);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .top-error.show{ display:block; }
+
+  /* ---------------- Results ---------------- */
+  #results{ display:none; }
+  #results.show{ display:block; }
+
+  .given-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .given-grid .item{
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align:center;
+  }
+  .given-grid .item .label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  .given-grid .item .value{
+    font-family: "Courier New", monospace;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  /* ---- ledger entry for each period (numbered = a real timeline) ---- */
+  .period{
+    position: relative;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--brass);
+    border-radius: 8px;
+    padding: 16px 16px 16px 46px;
+    margin-top: 14px;
+    background: var(--paper-raise);
+  }
+  .period.remaining{ border-left-color: var(--leaf); }
+  .period .badge{
+    position:absolute;
+    left: -2px;
+    top: -2px;
+    width: 34px;
+    height: 34px;
+    background: var(--brass);
+    color: var(--paper-raise);
+    border-radius: 50% 0 50% 0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: Georgia, serif;
+    font-weight:700;
+    font-size: 13px;
+  }
+  .period.remaining .badge{ background: var(--leaf); }
+  .period h3{
+    margin: 0 0 10px;
+    font-size: 14.5px;
+    font-family: Georgia, serif;
+    color: var(--ink);
+  }
+  .period .line{
+    display:flex;
+    justify-content: space-between;
+    align-items:baseline;
+    font-size: 13.5px;
+    padding: 5px 0;
+    border-bottom: 1px dotted var(--rule);
+    gap: 10px;
+  }
+  .period .line:last-child{ border-bottom:none; }
+  .period .line .k{ color: var(--ink-soft); }
+  .period .line .v{
+    font-family:"Courier New", monospace;
+    font-weight:700;
+    text-align:right;
+    white-space: nowrap;
+  }
+  .period .line.formula .v{
+    font-weight: 400;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+  }
+  .period .line.result .v{ color: var(--leaf); }
+
+  /* ---- final summary: torn deposit-receipt look (signature element) ---- */
+  .receipt{
+    margin-top: 22px;
+    position: relative;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 10px;
+    padding: 24px 22px 26px;
+    text-align:center;
+    overflow:visible;
+  }
+  .receipt::before, .receipt::after{
+    content:"";
+    position:absolute;
+    left:0; right:0;
+    height: 14px;
+    background:
+      radial-gradient(circle at 8px 0, transparent 7px, var(--paper) 7.5px) repeat-x;
+    background-size: 16px 14px;
+  }
+  .receipt::before{ top: -7px; transform: rotate(180deg); }
+  .receipt::after{ bottom: -7px; }
+  .receipt .tag{
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 10px;
+  }
+  .receipt .totals{
+    display:flex;
+    justify-content:center;
+    gap: 36px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .receipt .totals .t-item .t-label{
+    font-size: 12px;
+    color: #cfd4e6;
+    margin-bottom: 4px;
+  }
+  .receipt .totals .t-item .t-value{
+    font-family:"Courier New", monospace;
+    font-weight:700;
+    font-size: 17px;
+    color: var(--brass);
+  }
+  .receipt .final{
+    border-top: 1px dashed rgba(247,243,232,0.35);
+    margin-top: 6px;
+    padding-top: 14px;
+  }
+  .receipt .final .f-label{
+    font-family: Georgia, serif;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #cfd4e6;
+    margin-bottom: 6px;
+  }
+  .receipt .final .f-value{
+    font-family:"Courier New", monospace;
+    font-weight: 800;
+    font-size: clamp(24px, 6vw, 34px);
+    color: var(--paper);
+  }
+
+  footer{
+    text-align:center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 30px;
+  }
+
+  /* ---------------- Responsive ---------------- */
+  @media (max-width: 520px){
+    .given-grid{ grid-template-columns: 1fr; }
+    .receipt .totals{ gap: 20px; }
+    .period{ padding: 14px 12px 14px 40px; }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="cover">
+    <p class="eyebrow">Deposit Ledger</p>
+    <h1>Simple Interest Calculator</h1>
+    <p>Interest is compounded into the principal at the end of every complete 3-year period, using a fixed monthly rate. Enter your details below to see the full period-by-period breakdown.</p>
+  </header>
+
+  <!-- ---------------- INPUT CARD ---------------- -->
+  <section class="card">
+    <h2>Deposit Details</h2>
+
+    <div class="top-error" id="topError"></div>
+
+    <form id="calcForm" novalidate>
+      <div class="field">
+        <label for="principal">Principal Amount <span class="hint">(₹)</span></label>
+        <div class="input-row">
+          <span class="prefix">₹</span>
+          <input class="with-prefix" type="number" id="principal" name="principal"
+                 placeholder="e.g. 100000" min="0" step="0.01" inputmode="decimal" />
+        </div>
+        <div class="error-msg" id="err-principal"></div>
+      </div>
+
+      <div class="field">
+        <label for="rate">Monthly Interest Rate <span class="hint">(%)</span></label>
+        <div class="input-row">
+          <input type="number" id="rate" name="rate"
+                 placeholder="e.g. 1" min="0" step="0.01" inputmode="decimal" />
+        </div>
+        <div class="error-msg" id="err-rate"></div>
+      </div>
+
+      <div class="field">
+        <label for="years">Number of Years</label>
+        <div class="input-row">
+          <input type="number" id="years" name="years"
+                 placeholder="e.g. 7" min="1" step="1" inputmode="numeric" />
+        </div>
+        <div class="error-msg" id="err-years"></div>
+      </div>
+
+      <button type="submit" class="calc-btn">Calculate Interest</button>
+    </form>
+  </section>
+
+  <!-- ---------------- RESULTS ---------------- -->
+  <section class="card" id="results">
+    <h2>Given Details</h2>
+    <div class="given-grid">
+      <div class="item">
+        <div class="label">Principal</div>
+        <div class="value" id="givenPrincipal">—</div>
+      </div>
+      <div class="item">
+        <div class="label">Monthly Rate</div>
+        <div class="value" id="givenRate">—</div>
+      </div>
+      <div class="item">
+        <div class="label">Years</div>
+        <div class="value" id="givenYears">—</div>
+      </div>
+    </div>
+
+    <div id="periodsContainer"></div>
+
+    <div class="receipt">
+      <div class="tag">Passbook Summary</div>
+      <div class="totals">
+        <div class="t-item">
+          <div class="t-label">Original Principal</div>
+          <div class="t-value" id="sumOriginal">—</div>
+        </div>
+        <div class="t-item">
+          <div class="t-label">Total Interest Earned</div>
+          <div class="t-value" id="sumInterest">—</div>
+        </div>
+      </div>
+      <div class="final">
+        <div class="f-label">Final Amount</div>
+        <div class="f-value" id="sumFinal">—</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Simple Interest is calculated as Principal × Rate × Months ÷ 100, reinvested every 3 years.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- helpers ---------- */
+
+  // Format a number as Indian Rupee currency, e.g. ₹1,00,000.00
+  function formatINR(amount){
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
+  }
+
+  function formatNumber(n){
+    return new Intl.NumberFormat('en-IN').format(n);
+  }
+
+  const form            = document.getElementById('calcForm');
+  const principalInput  = document.getElementById('principal');
+  const rateInput       = document.getElementById('rate');
+  const yearsInput      = document.getElementById('years');
+
+  const errPrincipal = document.getElementById('err-principal');
+  const errRate      = document.getElementById('err-rate');
+  const errYears     = document.getElementById('err-years');
+  const topError      = document.getElementById('topError');
+
+  const resultsSection   = document.getElementById('results');
+  const periodsContainer = document.getElementById('periodsContainer');
+
+  /* ---------- validation ---------- */
+
+  function clearErrors(){
+    [principalInput, rateInput, yearsInput].forEach(el => el.classList.remove('invalid'));
+    [errPrincipal, errRate, errYears].forEach(el => { el.classList.remove('show'); el.textContent = ''; });
+    topError.classList.remove('show');
+    topError.textContent = '';
+  }
+
+  function showFieldError(input, errEl, message){
+    input.classList.add('invalid');
+    errEl.textContent = message;
+    errEl.classList.add('show');
+  }
+
+  // Validates all three inputs. Returns the parsed values if valid, or null.
+  function validateInputs(){
+    clearErrors();
+    let hasError = false;
+
+    const principalRaw = principalInput.value.trim();
+    const rateRaw       = rateInput.value.trim();
+    const yearsRaw      = yearsInput.value.trim();
+
+    const principal = parseFloat(principalRaw);
+    const rate      = parseFloat(rateRaw);
+    const years     = parseFloat(yearsRaw);
+
+    if (principalRaw === '' || isNaN(principal) || principal <= 0){
+      showFieldError(principalInput, errPrincipal, 'Enter a valid principal amount greater than 0.');
+      hasError = true;
+    }
+
+    if (rateRaw === '' || isNaN(rate) || rate <= 0){
+      showFieldError(rateInput, errRate, 'Enter a valid monthly interest rate greater than 0.');
+      hasError = true;
+    }
+
+    if (yearsRaw === '' || isNaN(years) || years <= 0 || !Number.isInteger(years)){
+      showFieldError(yearsInput, errYears, 'Enter a whole number of years, greater than 0.');
+      hasError = true;
+    }
+
+    if (hasError){
+      topError.textContent = 'Please fix the highlighted fields before calculating.';
+      topError.classList.add('show');
+      return null;
+    }
+
+    return { principal, rate, years };
+  }
+
+  /* ---------- calculation ----------
+     Rules:
+     - Rate is MONTHLY.
+     - Interest is computed and compounded into the principal
+       once every complete 3-year (36-month) block.
+     - Any leftover years (years % 3) form one final partial
+       period, computed in months (leftoverYears * 12).
+  */
+  function calculateSimpleInterest(principal, rate, years){
+    const periods = [];               // record of every period, for display
+    let currentPrincipal = principal;
+
+    const fullPeriods     = Math.floor(years / 3); // number of complete 3-year blocks
+    const remainingYears  = years % 3;              // leftover years after full blocks
+
+    // One iteration per complete 3-year (36-month) block
+    for (let i = 0; i < fullPeriods; i++){
+      const months  = 36;
+      const startPrincipal = currentPrincipal;
+      const interest = (startPrincipal * rate * months) / 100;
+      currentPrincipal = startPrincipal + interest;
+
+      periods.push({
+        type: 'full',
+        index: i + 1,
+        startPrincipal,
+        months,
+        interest,
+        endPrincipal: currentPrincipal
+      });
+    }
+
+    // Leftover partial period, if any
+    if (remainingYears > 0){
+      const months  = remainingYears * 12;
+      const startPrincipal = currentPrincipal;
+      const interest = (startPrincipal * rate * months) / 100;
+      currentPrincipal = startPrincipal + interest;
+
+      periods.push({
+        type: 'remaining',
+        startPrincipal,
+        months,
+        interest,
+        endPrincipal: currentPrincipal,
+        remainingYears
+      });
+    }
+
+    const totalInterest = currentPrincipal - principal;
+
+    return {
+      periods,
+      totalInterest,
+      finalAmount: currentPrincipal
+    };
+  }
+
+  /* ---------- rendering ---------- */
+
+  function renderGivenDetails(principal, rate, years){
+    document.getElementById('givenPrincipal').textContent = formatINR(principal);
+    document.getElementById('givenRate').textContent = rate + '% / month';
+    document.getElementById('givenYears').textContent = years + (years === 1 ? ' year' : ' years');
+  }
+
+  function periodCardHTML(period){
+    if (period.type === 'full'){
+      return `
+        <div class="period">
+          <div class="badge">${period.index}</div>
+          <h3>Period ${period.index} &middot; 3 years (36 months)</h3>
+          <div class="line">
+            <span class="k">Starting Principal</span>
+            <span class="v">${formatINR(period.startPrincipal)}</span>
+          </div>
+          <div class="line">
+            <span class="k">Number of Months</span>
+            <span class="v">${period.months}</span>
+          </div>
+          <div class="line formula">
+            <span class="k">Formula</span>
+            <span class="v">${formatNumber(period.startPrincipal.toFixed(2))} &times; rate &times; ${period.months} / 100</span>
+          </div>
+          <div class="line result">
+            <span class="k">Interest Earned</span>
+            <span class="v">${formatINR(period.interest)}</span>
+          </div>
+          <div class="line">
+            <span class="k">Updated Principal</span>
+            <span class="v">${formatINR(period.endPrincipal)}</span>
+          </div>
+        </div>`;
+    }
+
+    // remaining (partial) period
+    const yearLabel = period.remainingYears === 1 ? '1 year' : period.remainingYears + ' years';
+    return `
+      <div class="period remaining">
+        <div class="badge">R</div>
+        <h3>Remaining ${yearLabel} (${period.months} months)</h3>
+        <div class="line">
+          <span class="k">Starting Principal</span>
+          <span class="v">${formatINR(period.startPrincipal)}</span>
+        </div>
+        <div class="line">
+          <span class="k">Number of Months</span>
+          <span class="v">${period.months}</span>
+        </div>
+        <div class="line formula">
+          <span class="k">Formula</span>
+          <span class="v">${formatNumber(period.startPrincipal.toFixed(2))} &times; rate &times; ${period.months} / 100</span>
+        </div>
+        <div class="line result">
+          <span class="k">Interest Earned</span>
+          <span class="v">${formatINR(period.interest)}</span>
+        </div>
+        <div class="line">
+          <span class="k">Updated Principal</span>
+          <span class="v">${formatINR(period.endPrincipal)}</span>
+        </div>
+      </div>`;
+  }
+
+  function renderResults(principal, rate, years, result){
+    renderGivenDetails(principal, rate, years);
+
+    periodsContainer.innerHTML = result.periods.map(periodCardHTML).join('');
+
+    document.getElementById('sumOriginal').textContent = formatINR(principal);
+    document.getElementById('sumInterest').textContent = formatINR(result.totalInterest);
+    document.getElementById('sumFinal').textContent = formatINR(result.finalAmount);
+
+    resultsSection.classList.add('show');
+    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ---------- events ---------- */
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const values = validateInputs();
+    if (!values) {
+      resultsSection.classList.remove('show');
+      return;
+    }
+
+    const result = calculateSimpleInterest(values.principal, values.rate, values.years);
+    renderResults(values.principal, values.rate, values.years, result);
+  });
+
+  // Clear a field's error as soon as the user starts correcting it
+  [principalInput, rateInput, yearsInput].forEach(input => {
+    input.addEventListener('input', function(){
+      if (input.classList.contains('invalid')){
+        input.classList.remove('invalid');
+        const errEl = document.getElementById('err-' + input.id);
+        if (errEl){ errEl.classList.remove('show'); errEl.textContent = ''; }
+      }
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>
