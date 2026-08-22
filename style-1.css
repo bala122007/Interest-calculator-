@@ -1,427 +1,235 @@
-/* ============================================================
-     DESIGN TOKENS
-     Theme: an Indian bank passbook / deposit ledger.
-     Ink on paper, a brass stamp accent, monospace figures.
-     Sizing is tuned for easy reading: larger type, bolder
-     weights, and stronger contrast throughout.
-     ============================================================ */
-  :root{
-    --ink:        #1c2541;   /* deep ledger-navy for text & rules   */
-    --ink-soft:   #333c60;   /* darkened navy for secondary text -- kept dark for contrast */
-    --paper:      #f7f3e8;   /* aged ledger paper                   */
-    --paper-raise:#fffdf6;   /* card surface, slightly lighter      */
-    --rule:       #d3c7a0;   /* hairline rule colour, slightly deeper for visibility */
-    --brass:      #8a6a22;   /* brass stamp / accent, deepened for contrast on paper */
-    --brass-deep: #6f5419;
-    --leaf:       #235c40;   /* gain / positive money green, deepened  */
-    --leaf-bg:    #e7f0e9;
-    --oxide:      #7a2f29;   /* error / stamp-red ink, deepened for contrast */
-    --oxide-bg:   #f6e7e5;
-    --shadow:     rgba(28,37,65,0.16);
-  }
+/* style.css */
 
-  *{ box-sizing: border-box; }
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --error-color: #ef4444;
+    --success-bg: #f0fdf4;
+    --success-text: #166534;
+}
 
-  html{
-    /* Larger base size throughout the page for easy reading */
-    font-size: 19px;
-  }
-
-  html, body{
-    margin:0;
-    padding:0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* faint horizontal ledger rules across the whole page */
-  body{
-    background-image: repeating-linear-gradient(
-      to bottom,
-      transparent, transparent 37px,
-      var(--rule) 37px, var(--rule) 38px
-    );
-  }
-
-  .wrap{
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 28px 20px 80px;
-  }
-
-  /* ---------------- Header: passbook cover strip ---------------- */
-  header.cover{
-    background: var(--ink);
-    color: var(--paper);
-    border-radius: 10px;
-    padding: 28px 26px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 24px var(--shadow);
-  }
-  header.cover::before{
-    content:"";
-    position:absolute;
-    inset:6px;
-    border: 1px solid rgba(247,243,232,0.35);
-    border-radius: 6px;
-    pointer-events:none;
-  }
-  .eyebrow{
-    font-family: Georgia, "Times New Roman", serif;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-size: 0.78rem;
-    color: #d8b25a;
-    margin: 0 0 10px;
-    font-weight: 700;
-  }
-  h1{
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(30px, 6vw, 40px);
-    margin: 0 0 10px;
-    letter-spacing: 0.01em;
-    line-height: 1.2;
-  }
-  header.cover p{
+* {
+    box-sizing: border-box;
     margin: 0;
-    color: #e4e8f4;
-    font-size: 1.05rem;
-    line-height: 1.6;
-    max-width: 48ch;
-  }
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
 
-  /* ---------------- Card shell ---------------- */
-  .card{
-    background: var(--paper-raise);
-    border: 1px solid var(--rule);
-    border-radius: 10px;
-    padding: 24px;
-    margin-top: 22px;
-    box-shadow: 0 4px 14px var(--shadow);
-  }
-  .card h2{
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.15rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--ink);
-    margin: 0 0 18px;
-    padding-bottom: 12px;
-    border-bottom: 2px dashed var(--rule);
-    font-weight: 700;
-  }
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.5;
+    padding: 20px;
+}
 
-  /* ---------------- Form ---------------- */
-  .field{
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-size: 1.75rem;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 30px;
+    margin-bottom: 25px;
+}
+
+.form-group {
     margin-bottom: 20px;
-  }
-  .field label{
-    display:block;
-    font-size: 1.08rem;
-    font-weight: 700;
-    color: var(--ink);
+}
+
+label {
+    display: block;
+    font-weight: 600;
     margin-bottom: 8px;
-  }
-  .field .hint{
-    font-size: 0.9rem;
-    color: var(--ink-soft);
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.prefix, .suffix {
+    position: absolute;
+    color: var(--text-muted);
     font-weight: 500;
-    margin-left: 4px;
-  }
-  .input-row{
-    position: relative;
-  }
-  .input-row .prefix{
-    position:absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--ink-soft);
-    font-family: "Courier New", monospace;
-    font-size: 1.15rem;
-    font-weight: 700;
-    pointer-events:none;
-  }
-  input[type="number"]{
-    width: 100%;
-    font-size: 1.2rem;
-    font-family: "Courier New", monospace;
-    font-weight: 700;
-    padding: 15px 16px;
-    border: 2px solid var(--rule);
-    border-radius: 8px;
-    background: #fff;
-    color: var(--ink);
-    transition: border-color .15s ease, box-shadow .15s ease;
-  }
-  input[type="number"].with-prefix{ padding-left: 38px; }
+}
 
-  /* ---------------- Tenure (years / months / days) ---------------- */
-  .tenure-row{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-  .tenure-sub{ text-align:center; }
-  .tenure-sub input[type="number"]{ text-align:center; }
-  .tenure-unit{
-    display:block;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--ink-soft);
-    margin-top: 7px;
-    font-weight: 700;
-  }
-  .tenure-note{
-    font-size: 0.88rem;
-    color: var(--ink-soft);
-    margin: 10px 0 0;
-    line-height: 1.5;
-  }
-  @media (max-width: 420px){
-    .tenure-row{ grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .tenure-unit{ font-size: 0.75rem; }
-  }
-  input[type="number"]:focus{
+.prefix {
+    left: 12px;
+}
+
+.suffix {
+    right: 12px;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
     outline: none;
-    border-color: var(--brass);
-    box-shadow: 0 0 0 4px rgba(138,106,34,0.22);
-  }
-  input.invalid{
-    border-color: var(--oxide);
-    background: var(--oxide-bg);
-  }
-  .error-msg{
-    display:none;
-    color: var(--oxide);
-    font-size: 0.95rem;
-    margin-top: 8px;
-    font-weight: 700;
-    line-height: 1.4;
-  }
-  .error-msg.show{ display:block; }
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
 
-  button.calc-btn{
-    width: 100%;
-    margin-top: 8px;
-    padding: 18px 20px;
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-family: Georgia, "Times New Roman", serif;
-    color: var(--paper);
-    background: var(--ink);
-    border: 2px solid var(--ink);
+input[type="number"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.input-wrapper.has-prefix input { padding-left: 35px; }
+.input-wrapper.has-suffix input { padding-right: 35px; }
+
+.tenure-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+button {
+    flex: 1;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
     border-radius: 8px;
+    border: none;
     cursor: pointer;
-    transition: transform .08s ease, background .15s ease;
-  }
-  button.calc-btn:hover{ background: #10182e; }
-  button.calc-btn:active{ transform: scale(0.98); }
-  button.calc-btn:focus-visible{
-    outline: 3px solid var(--brass);
-    outline-offset: 2px;
-  }
+    transition: background-color 0.2s;
+}
 
-  .top-error{
-    display:none;
-    background: var(--oxide-bg);
-    border: 2px solid var(--oxide);
-    color: var(--oxide);
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: var(--border-color);
+    color: var(--text-main);
+}
+
+.btn-secondary:hover {
+    background-color: #cbd5e1;
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.9rem;
+    margin-top: 5px;
+    display: none;
+}
+
+#resultSection {
+    display: none;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.summary-box {
+    background: var(--success-bg);
+    border: 1px solid #bbf7d0;
+    padding: 20px;
     border-radius: 8px;
-    padding: 14px 16px;
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 18px;
-    line-height: 1.5;
-  }
-  .top-error.show{ display:block; }
+    text-align: center;
+}
 
-  /* ---------------- Results ---------------- */
-  #results{ display:none; }
-  #results.show{ display:block; }
-
-  .given-grid{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-  .given-grid .item{
-    background: var(--paper);
-    border: 2px solid var(--rule);
-    border-radius: 8px;
-    padding: 12px 12px;
-    text-align:center;
-  }
-  .given-grid .item .label{
-    font-size: 0.82rem;
+.summary-box h3 {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--ink-soft);
-    margin-bottom: 6px;
-    font-weight: 700;
-  }
-  .given-grid .item .value{
-    font-family: "Courier New", monospace;
-    font-weight: 700;
-    font-size: 1.05rem;
-    color: var(--ink);
-  }
+    letter-spacing: 0.5px;
+}
 
-  /* ---- ledger entry for each period (numbered = a real timeline) ---- */
-  .period{
-    position: relative;
-    border: 2px solid var(--rule);
-    border-left: 6px solid var(--brass);
-    border-radius: 8px;
-    padding: 18px 18px 18px 52px;
-    margin-top: 16px;
-    background: var(--paper-raise);
-  }
-  .period.remaining{ border-left-color: var(--leaf); }
-  .period .badge{
-    position:absolute;
-    left: -2px;
-    top: -2px;
-    width: 40px;
-    height: 40px;
-    background: var(--brass);
-    color: var(--paper-raise);
-    border-radius: 50% 0 50% 0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family: Georgia, serif;
-    font-weight:700;
-    font-size: 1.05rem;
-  }
-  .period.remaining .badge{ background: var(--leaf); }
-  .period h3{
-    margin: 0 0 12px;
-    font-size: 1.12rem;
-    font-family: Georgia, serif;
-    color: var(--ink);
+.summary-box .value {
+    color: var(--success-text);
+    font-size: 1.5rem;
     font-weight: 700;
-    line-height: 1.4;
-  }
-  .period .line{
-    display:flex;
-    justify-content: space-between;
-    align-items:baseline;
-    font-size: 1.02rem;
-    padding: 7px 0;
-    border-bottom: 1px dotted var(--rule);
-    gap: 12px;
-  }
-  .period .line:last-child{ border-bottom:none; }
-  .period .line .k{ color: var(--ink-soft); font-weight: 600; }
-  .period .line .v{
-    font-family:"Courier New", monospace;
-    font-weight:700;
-    text-align:right;
-    white-space: nowrap;
-  }
-  .period .line.formula .v{
-    font-weight: 600;
-    color: var(--ink-soft);
-    font-size: 0.92rem;
-  }
-  .period .line.result .v{ color: var(--leaf); font-size: 1.08rem; }
+}
 
-  /* ---- final summary: torn deposit-receipt look (signature element) ---- */
-  .receipt{
-    margin-top: 24px;
-    position: relative;
-    background: var(--ink);
-    color: var(--paper);
-    border-radius: 10px;
-    padding: 28px 22px 30px;
-    text-align:center;
-    overflow:visible;
-  }
-  .receipt::before, .receipt::after{
-    content:"";
-    position:absolute;
-    left:0; right:0;
-    height: 14px;
-    background:
-      radial-gradient(circle at 8px 0, transparent 7px, var(--paper) 7.5px) repeat-x;
-    background-size: 16px 14px;
-  }
-  .receipt::before{ top: -7px; transform: rotate(180deg); }
-  .receipt::after{ bottom: -7px; }
-  .receipt .tag{
-    font-size: 0.85rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #d8b25a;
-    margin-bottom: 12px;
-    font-weight: 700;
-  }
-  .receipt .totals{
-    display:flex;
-    justify-content:center;
-    gap: 40px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
-  .receipt .totals .t-item .t-label{
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
     font-size: 0.95rem;
-    color: #e4e8f4;
-    margin-bottom: 6px;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: right;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: #f1f5f9;
     font-weight: 600;
-  }
-  .receipt .totals .t-item .t-value{
-    font-family:"Courier New", monospace;
-    font-weight:700;
-    font-size: 1.35rem;
-    color: #d8b25a;
-  }
-  .receipt .final{
-    border-top: 1px dashed rgba(247,243,232,0.35);
-    margin-top: 8px;
-    padding-top: 16px;
-  }
-  .receipt .final .f-label{
-    font-family: Georgia, serif;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #e4e8f4;
-    margin-bottom: 8px;
-    font-weight: 700;
-  }
-  .receipt .final .f-value{
-    font-family:"Courier New", monospace;
-    font-weight: 800;
-    font-size: clamp(32px, 7vw, 46px);
-    color: var(--paper);
-  }
+    color: var(--text-main);
+}
 
-  footer{
-    text-align:center;
-    font-size: 0.92rem;
-    color: var(--ink-soft);
-    margin-top: 32px;
-    line-height: 1.5;
-    font-weight: 600;
-  }
+th:first-child, td:first-child {
+    text-align: left;
+}
 
-  /* ---------------- Responsive ---------------- */
-  @media (max-width: 520px){
-    html{ font-size: 18px; }
-    .given-grid{ grid-template-columns: 1fr; }
-    .receipt .totals{ gap: 24px; }
-    .period{ padding: 16px 14px 16px 46px; }
-  }
+tbody tr:last-child td {
+    border-bottom: none;
+}
 
-  /* Respect reduced motion */
-  @media (prefers-reduced-motion: reduce){
-    *{ transition: none !important; }
-  }
+.formula-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+    .button-group {
+        flex-direction: column;
+    }
+    .card {
+        padding: 20px;
+    }
+}
